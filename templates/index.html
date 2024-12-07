@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Search</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Image Search</h1>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="text_query">Text query:</label>
+                <input type="text" name="text_query" id="text_query" placeholder="e.g., snowy" />
+            </div>
+
+            <div class="form-group">
+                <label for="image_query">Image query:</label>
+                <input type="file" name="image_query" id="image_query" accept="image/*" />
+            </div>
+
+            <div class="form-group">
+                <label for="weight">Hybrid Query Weight (λ):</label>
+                <input type="number" name="weight" id="weight" step="0.1" min="0" max="1" value="0.8" />
+            </div>
+
+            <div class="form-group">
+                <label for="query_type">Select query type:</label>
+                <select name="query_type" id="query_type">
+                    <option value="text_query">Text query</option>
+                    <option value="image_query">Image query</option>
+                    <option value="hybrid_query">Hybrid query</option>
+                </select>
+            </div>
+
+            <button type="submit">Search</button>
+        </form>
+
+        {% if results %}
+        <h2>Top Search Results</h2>
+        <div class="results-grid">
+            {% for result in results %}
+            <div class="result-card">
+                <div class="image-container">
+                    <img src="{{ result.path }}" alt="Search Result" loading="lazy" />
+                </div>
+                <div class="similarity-score">
+                    Similarity: {{ result.score }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

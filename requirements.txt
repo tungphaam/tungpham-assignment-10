@@ -1,0 +1,8 @@
+flask
+torch
+torchvision
+Pillow
+pandas
+numpy<2.0
+tqdm
+open_clip_torch
