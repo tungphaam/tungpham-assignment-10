@@ -1,0 +1,47 @@
+name: Python application
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    
+    - name: Create virtual environment and install dependencies using Makefile
+      run: |
+        make install
+    
+    - name: Run Flask server in the background with logging
+      run: |
+        nohup make run > flask.log 2>&1 &
+
+    - name: Wait for Flask server to start
+      run: |
+        sleep 20  # Increased wait time to 20 seconds
+
+    - name: Print Flask server logs
+      run: |
+        cat flask.log
+
+    - name: Check if Flask server is accessible
+      run: |
+        curl --fail http://localhost:3000 || exit 1
+
+    - name: Kill Flask server
+      run: |
+        pkill -f "flask run"
